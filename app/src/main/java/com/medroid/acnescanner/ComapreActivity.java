@@ -11,8 +11,8 @@ import android.widget.ImageView;
 
 public class ComapreActivity extends ActionBarActivity {
 
-    private ImageView today;
-    private ImageView yesterday;
+    private TouchImageView today;
+    private TouchImageView yesterday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,8 +23,8 @@ public class ComapreActivity extends ActionBarActivity {
         String todayPath = extras.getString("today","TODO");
         String yesterdayPath = extras.getString("yesterday","TODO");
 
-        today = (ImageView) findViewById(R.id.up);
-        yesterday = (ImageView) findViewById(R.id.down);
+        today = (TouchImageView) findViewById(R.id.up);
+        yesterday = (TouchImageView) findViewById(R.id.down);
 
         Bitmap bmp = BitmapFactory.decodeFile(todayPath);
         Bitmap bmp2 = BitmapFactory.decodeFile(yesterdayPath);

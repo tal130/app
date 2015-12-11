@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
 
             // Bitmap imageBitmap = (Bitmap).get("data");
             tripImage.setImageBitmap(imageBitmap);
-            tripImage.setRotation(90);
+            tripImage.setRotation(90); // TODO when save image the image was roteted. need to fix to diffrent phones
 
 
             //if there is previus image compare them in new intent
