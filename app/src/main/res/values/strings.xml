@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AcneScanner</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_make_photo">MakePhotoActivity</string>
+    <string name="title_activity_android_camera_example">AndroidCameraExample</string>
+    <string name="title_activity_comapre">ComapreActivity</string>
+</resources>
