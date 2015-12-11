@@ -42,6 +42,8 @@ public class MainActivity extends ActionBarActivity {
         tripImage = (ImageView)this.findViewById(R.id.imageView);
         Button takePhotoButton = (Button)this.findViewById(R.id.pic);
 
+
+        //this will open galaxy camera
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +51,8 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-
+        // this will open our camera app
+        // its working but when you take picture its automaticly save on the device. need to add preview
 //        takePhotoButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
