@@ -4,9 +4,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.text.ParseException;
+import java.util.List;
 
 
 public class ComapreActivity extends ActionBarActivity {
@@ -18,22 +27,53 @@ public class ComapreActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comapre);
 
-        Bundle extras = getIntent().getExtras();
-
-        String todayPath = extras.getString("today","TODO");
-        String yesterdayPath = extras.getString("yesterday","TODO");
 
         today = (TouchImageView) findViewById(R.id.up);
         yesterday = (TouchImageView) findViewById(R.id.down);
 
-        Bitmap bmp = BitmapFactory.decodeFile(todayPath);
-        Bitmap bmp2 = BitmapFactory.decodeFile(yesterdayPath);
 
-        today.setImageBitmap(bmp);
-        yesterday.setImageBitmap(bmp2);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
+        query.fromLocalDatastore();
+        query.orderByDescending("updatedAt");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, com.parse.ParseException e) {
+                if (e == null) {
 
-        today.setRotation(-90);
-        yesterday.setRotation(-90);
+                    Log.i("today path : ", objects.get(0).getString("path"));
+                    Bitmap bmp = BitmapFactory.decodeFile(objects.get(0).getString("path"));
+                    Bitmap bmp2 = null;
+                    if(objects.size() == 1)
+                    {
+                        bmp2 = BitmapFactory.decodeFile(objects.get(0).getString("path"));
+                    }
+                    else {
+                        bmp2 = BitmapFactory.decodeFile(objects.get(1).getString("path"));
+                    }
+
+
+
+
+                    today.setImageBitmap(bmp);
+                    yesterday.setImageBitmap(bmp2);
+
+
+                    today.setRotation(-90);
+                    yesterday.setRotation(-90);
+
+
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+
+
+
+
     }
 
     @Override
