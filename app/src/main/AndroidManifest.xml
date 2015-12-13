@@ -6,6 +6,8 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -17,7 +19,16 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".Myapplication">
+
+        <meta-data
+            android:name="com.parse.APPLICATION_ID"
+            android:value="9Th4M9hN0R2nBH8flFaqDCZyCwYpOcKcztlvqy6C" />
+        <meta-data
+            android:name="com.parse.CLIENT_KEY"
+            android:value="GJVkmfJSqt5vdmep4NXOR42w3G6Z1SyKs53r0srX" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -26,10 +37,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".MakePhotoActivity"
-            android:label="@string/title_activity_make_photo" >
         </activity>
         <activity
             android:name=".AndroidCameraExample"

@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.parse.ParseObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,7 +29,7 @@ import java.util.Date;
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     private ImageView tripImage;
     private String mCurrentPhotoPath;
     private String workDir;
@@ -38,6 +41,12 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.v("cls","cs");
+
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
 
         tripImage = (ImageView)this.findViewById(R.id.imageView);
         Button takePhotoButton = (Button)this.findViewById(R.id.pic);
