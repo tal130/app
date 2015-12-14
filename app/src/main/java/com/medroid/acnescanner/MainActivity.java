@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
                     s = s.substring(0, 11) + "00:00:00";
                     Log.i("today date: " , s);
                     try {
-                        Log.i("today date: " , object.getDate("updatedAt").toString());
-                        if (object.getDate("updatedAt").after(DATE_FORMAT.parse(s))) {
+                        Log.i("today date: " , object.getString("date"));
+                        if (DATE_FORMAT.parse(object.getString("date")).after(DATE_FORMAT.parse(s))) {
                             //TODO set bundle with result
                             setComparePage();
                         } else {
@@ -193,7 +193,10 @@ public class MainActivity extends AppCompatActivity {
     public void saveToParse(String filePath)
     {
         ParseObject image = new ParseObject("images");
+        Date d = new Date();
+        String dateString = DATE_FORMAT.format(d);
         image.put("path", filePath);
+        image.put("date", dateString);
         image.pinInBackground();
     }
 

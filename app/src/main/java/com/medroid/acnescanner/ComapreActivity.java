@@ -2,25 +2,28 @@ package com.medroid.acnescanner;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.text.ParseException;
 import java.util.List;
 
 
-public class ComapreActivity extends ActionBarActivity {
+public class ComapreActivity extends AppCompatActivity {
 
     private TouchImageView today;
+    private SeekBar mSeekBar;
     private TouchImageView yesterday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +45,12 @@ public class ComapreActivity extends ActionBarActivity {
 
                     Log.i("today path : ", objects.get(0).getString("path"));
                     Bitmap bmp = BitmapFactory.decodeFile(objects.get(0).getString("path"));
-                    Bitmap bmp2 = null;
-                    if(objects.size() == 1)
-                    {
+                    Bitmap bmp2;
+                    if (objects.size() == 1) {
                         bmp2 = BitmapFactory.decodeFile(objects.get(0).getString("path"));
-                    }
-                    else {
+                    } else {
                         bmp2 = BitmapFactory.decodeFile(objects.get(1).getString("path"));
                     }
-
-
 
 
                     today.setImageBitmap(bmp);
@@ -69,12 +68,56 @@ public class ComapreActivity extends ActionBarActivity {
         });
 
 
+        mSeekBar = (SeekBar)findViewById(R.id.seekBar);
 
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progressChanged = 0;
 
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+                if (progress <= 50) {
+                    setProgressBarColor(mSeekBar, Color.rgb(
+                            255 - (255 / 100 * (100 - progress * 2)),
+                            255, 0));
 
+                } else {
+                    setProgressBarColor(mSeekBar, Color.rgb(255,
+                            255 - (255 / 100 * (progress - 50) * 2), 0));
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
 
     }
+
+    /**
+     * this method is used to change the color of the seek bar
+     *
+     * @param seakBar
+     *            the seekbar whose color has to be changed
+     * @param newColor
+     *            the color which has to be changed
+     */
+    public void setProgressBarColor(SeekBar seakBar, int newColor) {
+        LayerDrawable ld = (LayerDrawable) seakBar.getProgressDrawable();
+        ClipDrawable d1 = (ClipDrawable) ld
+                .findDrawableByLayerId(R.id.progressshape);
+        d1.setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
