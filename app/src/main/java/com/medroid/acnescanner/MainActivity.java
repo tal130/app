@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
          */
         ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
         query.fromLocalDatastore();
-        query.orderByDescending("updatedAt");
+        query.orderByDescending("date");
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
