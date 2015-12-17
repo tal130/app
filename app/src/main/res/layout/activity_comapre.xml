@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:background="#ff0000"
         >
         <com.medroid.acnescanner.TouchImageView
             android:layout_width="match_parent"
@@ -34,7 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:background="#00ff00"
         >
         <com.medroid.acnescanner.TouchImageView
             android:layout_width="match_parent"
@@ -48,6 +47,8 @@
             android:id="@+id/spinner"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:layout_toLeftOf="@+id/down" />
+            android:layout_toLeftOf="@+id/down"
+
+            />
     </RelativeLayout>
 </LinearLayout>

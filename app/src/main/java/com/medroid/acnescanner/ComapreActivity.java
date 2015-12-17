@@ -1,5 +1,6 @@
 package com.medroid.acnescanner;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,18 +9,23 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -27,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ComapreActivity extends AppCompatActivity {
+public class ComapreActivity extends BaseActivity {
 
     private TouchImageView today;
     private SeekBar mSeekBar;
@@ -68,7 +74,34 @@ public class ComapreActivity extends AppCompatActivity {
                     for (ParseObject obj : objects) {
                         spinnerArray.add(obj.getString("date").substring(0, 10));
                     }
-                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, spinnerArray){
+
+                        @Override
+                        public boolean isEnabled(int position) {
+                            return position != 1;
+                        }
+
+                        @Override
+                        public boolean areAllItemsEnabled() {
+                            return false;
+                        }
+
+                        @Override
+                        public View getDropDownView(int position, View convertView, ViewGroup parent){
+                            View v = convertView;
+                            if (v == null) {
+                                Context mContext = this.getContext();
+                                LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                v = vi.inflate(R.layout.spinner_item, null);
+                            }
+
+                            TextView tv = (TextView) v.findViewById(R.id.temp);
+                            tv.setText(spinnerArray.get(position));
+                            tv.setTextColor(Color.BLACK);
+                            return v;
+                        }
+                    };
+                    //selected item will look like a spinner set from XML
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(spinnerArrayAdapter);
 
@@ -82,8 +115,23 @@ public class ComapreActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //does not work. need to debug. check if its reach here
-                Toast.makeText(getApplicationContext(), (String)parent.getItemAtPosition(position),Toast.LENGTH_LONG);
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
+                query.fromLocalDatastore();
+                query.whereContains("date", (String) parent.getItemAtPosition(position));
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> objects, ParseException e) {
+                        if (e == null) {
+                            setImage(yesterday, objects.get(0).getString("path"));
+                            yesterday.setRotation(-90);
+                        }
+                        else
+                        {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
             }
 
             @Override
@@ -119,6 +167,16 @@ public class ComapreActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                SaveDialogBox save= new SaveDialogBox();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+                // Supply num input as an argument.
+                Bundle args = new Bundle();
+                args.putDouble("precentage", progressChanged);
+                save.setArguments(args);
+
+
+                save.show(ft, "dialog");
 
             }
         });
@@ -140,6 +198,11 @@ public class ComapreActivity extends AppCompatActivity {
                 .findDrawableByLayerId(R.id.progressshape);
         d1.setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
 
+
+        LayerDrawable ld1 = (LayerDrawable) seakBar.getProgressDrawable();
+        ClipDrawable d12 = (ClipDrawable) ld1
+                .findDrawableByLayerId(R.id.background);
+        d12.setColorFilter(newColor, PorterDuff.Mode.SRC_IN);
     }
 
 
@@ -149,27 +212,27 @@ public class ComapreActivity extends AppCompatActivity {
         image.setImageBitmap(bmp);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_comapre, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+////        getMenuInflater().inflate(R.menu.menu_comapre, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+// 
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onBackPressed() {

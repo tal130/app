@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/spinnerItemStyle"
+    android:id="@+id/temp"
+    android:singleLine="true"
+    android:textColor="#000"
+    android:background="#aaa"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="marquee" />
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+
+    <!--<TextView-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textSize="20sp"-->
+    <!--android:gravity="left"-->
+    <!--android:textColor="#000000"-->
+    <!--android:padding="5dip"-->
+    <!--android:background="#aaa"-->
+    <!--/>-->
