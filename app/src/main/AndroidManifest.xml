@@ -15,28 +15,29 @@
         android:name="android.hardware.camera.front"
         android:required="false" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
+        android:name=".Myapplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name=".Myapplication">
-
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.parse.APPLICATION_ID"
             android:value="9Th4M9hN0R2nBH8flFaqDCZyCwYpOcKcztlvqy6C" />
         <meta-data
             android:name="com.parse.CLIENT_KEY"
             android:value="GJVkmfJSqt5vdmep4NXOR42w3G6Z1SyKs53r0srX" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".AndroidCameraExample"
@@ -46,6 +47,28 @@
             android:name=".ComapreActivity"
             android:label="@string/title_activity_comapre" >
         </activity>
+        <activity
+            android:name=".ProgressChartActivity"
+            android:label="@string/title_activity_progress_chart" >
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" />
+
     </application>
 
 </manifest>

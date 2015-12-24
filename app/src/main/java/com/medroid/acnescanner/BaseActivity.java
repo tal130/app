@@ -12,7 +12,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        getSupportActionBar().setTitle("GetTrip");
+        getSupportActionBar().setTitle("Acne Scanner");
         return true;
     }
 
@@ -33,9 +33,9 @@ public class BaseActivity extends AppCompatActivity {
         //show massages from people who want to join
 //        Bundle bundle=new Bundle();
 //        bundle.putString("type","message");
-//        Intent intent = new Intent(this, MassagesActivity.class);
+        Intent intent = new Intent(this, ProgressChartActivity.class);
 //        intent.putExtras(bundle);
-//        startActivity(intent);
+        startActivity(intent);
     }
 
 

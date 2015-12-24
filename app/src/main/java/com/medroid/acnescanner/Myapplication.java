@@ -4,6 +4,7 @@ package com.medroid.acnescanner;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.facebook.FacebookSdk;
 
 /**
  * Created by tal on 13/12/2015.
@@ -19,5 +20,7 @@ public class Myapplication extends Application {
         Parse.enableLocalDatastore(this);
 
         Parse.initialize(this);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
     }
 }

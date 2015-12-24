@@ -6,4 +6,10 @@
     <string name="title_activity_make_photo">MakePhotoActivity</string>
     <string name="title_activity_android_camera_example">AndroidCameraExample</string>
     <string name="title_activity_comapre">ComapreActivity</string>
+    <string name="title_activity_progress_chart">ProgressChartActivity</string>
+    <string name="facebook_app_id">569405289879634</string>
+    <string name="pie">Pie</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

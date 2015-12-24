@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ComapreActivity extends BaseActivity {
+public class ComapreActivity extends BaseActivity{
 
     private TouchImageView today;
     private SeekBar mSeekBar;
@@ -71,9 +71,13 @@ public class ComapreActivity extends BaseActivity {
                     yesterday.setRotation(-90);
 
                     //set spinner values
-                    for (ParseObject obj : objects) {
+                    List<ParseObject> temp = objects.subList(1,objects.size());
+//                    for(int i=1;i<objects.size();i++)
+                    for (ParseObject obj : temp) {
                         spinnerArray.add(obj.getString("date").substring(0, 10));
                     }
+                    if (spinnerArray.size() == 0)
+                        spinner.setVisibility(View.INVISIBLE);
                     ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, spinnerArray){
 
                         @Override
@@ -86,7 +90,7 @@ public class ComapreActivity extends BaseActivity {
                             return false;
                         }
 
-                        @Override
+                        @Override   //set the color of the text in the spinner
                         public View getDropDownView(int position, View convertView, ViewGroup parent){
                             View v = convertView;
                             if (v == null) {
@@ -149,14 +153,13 @@ public class ComapreActivity extends BaseActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressChanged = progress;
                 if (progress <= 50) {
-                    setProgressBarColor(mSeekBar, Color.rgb(
-                            255 - (255 / 100 * (100 - progress * 2)),
-                            255, 0));
+                    setProgressBarColor(mSeekBar, Color.rgb(255,
+                            255 - (255 / 100 * (50 - progress) * 2), 0));
 
                 } else {
-                    setProgressBarColor(mSeekBar, Color.rgb(255,
-                            255 - (255 / 100 * (progress - 50) * 2), 0));
-
+                    setProgressBarColor(mSeekBar, Color.rgb(
+                            255 - (255 / 100 * ( progress * 2 - 100)),
+                            255, 0));
                 }
             }
 
@@ -167,7 +170,7 @@ public class ComapreActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                SaveDialogBox save= new SaveDialogBox();
+                SaveAlertDialog save= new SaveAlertDialog();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
 
                 // Supply num input as an argument.
@@ -230,7 +233,7 @@ public class ComapreActivity extends BaseActivity {
 //        if (id == R.id.action_settings) {
 //            return true;
 //        }
-// 
+//
 //        return super.onOptionsItemSelected(item);
 //    }
 
@@ -244,4 +247,5 @@ public class ComapreActivity extends BaseActivity {
         finish();
         System.exit(0);
     }
+
 }
