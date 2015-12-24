@@ -30,14 +30,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -54,7 +65,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -67,64 +77,113 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            //user already signin
+            finish();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+
+        } else {
+            // show the signup or login screen
+            setContentView(R.layout.activity_login);
+
+            // Set up the login form.
+            mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+            populateAutoComplete();
+
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+            Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+            Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    attemptLogin();
+                }
+            });
 
+            mEmailSignUpButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    attemptLogin();     //TODO: need to change to signup to DB and not sign-in
+                }
+            });
 
-        callbackManager = CallbackManager.Factory.create();
-
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.i("login succesfull","");
-                Toast toast = Toast.makeText(getApplicationContext(), "user: " + loginResult.getAccessToken().getUserId(), Toast.LENGTH_LONG);
-                toast.show();
-
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
 
 
-            }
+            //facebook login
+            callbackManager = CallbackManager.Factory.create();
 
-            @Override
-            public void onCancel() {
-                Log.i("login canceled","");
-            }
+            loginButton = (LoginButton) findViewById(R.id.login_button);
+            loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
 
-            @Override
-            public void onError(FacebookException e) {
-                Log.e("error facebook","");
-                Toast toast = Toast.makeText(getApplicationContext(), "an error occur. check your internet connection.", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject me, GraphResponse response) {
+                                    if (response.getError() != null) {
+                                        Log.e("LoginActivity", "error");
+                                        // handle error
+                                    } else {
+
+                                        String email = me.optString("email");
+                                        Log.e("LoginActivity", email);
+
+                                        ParseUser user = new ParseUser();
+                                        try {
+                                            user.setUsername(email);
+                                            user.setPassword(me.getString("id"));
+                                            user.setEmail(email);
+
+//                                            user.becomeInBackground("session-token-here");
+                                            SignupToDB(user);
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                }
+                            });
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.i("login canceled", "");
+                }
+
+                @Override
+                public void onError(FacebookException e) {
+                    Log.e("error facebook", "");
+                    Toast toast = Toast.makeText(getApplicationContext(), "an error occur. check your internet connection.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+        }
     }
 
     @Override
@@ -143,10 +202,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -184,10 +239,154 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            logInToDB(email,password);
         }
     }
+
+
+    private void SignupToDB(ParseUser user)
+    {
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // The user is logged in.
+
+//                             TODO: for later use installation for pushup notification
+//                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//                            installation.put("email", email);
+//                            installation.saveInBackground();
+
+
+                            Log.i("register","successful");
+                            showProgress(false);
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                } else {
+                    Log.e("register","failed");
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    switch (e.getCode()) {
+                        case ParseException.USERNAME_TAKEN:
+                            showProgress(false);
+                            mEmailView.setError("USERNAME_TAKEN");
+                            mEmailView.requestFocus();
+                            Log.d("Testing","Sorry, this username has already been taken.");
+                            break;
+                        case ParseException.USERNAME_MISSING:
+                            Log.d("Testing","Sorry, you must supply a username to register.");
+                            showProgress(false);
+                            mEmailView.setError("USERNAME_MISSING");
+                            mEmailView.requestFocus();
+                            break;
+                        case ParseException.PASSWORD_MISSING:
+                            Log.d("Testing","Sorry, you must supply a password to register.");
+                            showProgress(false);
+                            mPasswordView.setError("PASSWORD_MISSING");
+                            mPasswordView.requestFocus();
+                            break;
+                        case ParseException.CONNECTION_FAILED:
+                            Log.d("Testing","Internet connection was not found. Please see your connection settings.");
+                            showProgress(false);
+                            mEmailView.setError("CONNECTION_FAILED");
+                            mEmailView.requestFocus();
+                            break;
+                        case ParseException.INVALID_EMAIL_ADDRESS:
+                            Log.d("Testing","Internet connection was not found. Please see your connection settings.");
+                            showProgress(false);
+                            mEmailView.setError(getText(R.string.error_invalid_email));
+                            mEmailView.requestFocus();
+                            break;
+                        default:
+                            Log.d("Testing",e.getLocalizedMessage());
+                            showProgress(false);
+                            mEmailView.setError("User or password are wrong");
+                            mEmailView.requestFocus();
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void logInToDB(final String email,String password)
+    {
+        ParseUser.logInInBackground(email, password, new LogInCallback() {
+            @Override
+            public void done(ParseUser user, com.parse.ParseException e) {
+                if (user != null) {
+                    Log.e("log in", "successful");
+                    // The user is logged in.
+
+//                    TODO: for later use installation for pushup notification
+//                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//                    installation.put("email", email);
+//                    installation.saveInBackground();
+
+                    Log.e("installation", "successful");
+
+                    showProgress(false);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    //  finish();
+                } else {
+                    Log.e("log in", "failed");
+                    // Login failed. Look at the ParseException to see what happened.
+                    switch (e.getCode()) {
+                        case ParseException.PASSWORD_MISSING:
+                            Log.d("Testing", "Sorry, Enter password.");
+                            showProgress(false);
+                            mPasswordView.setError("Enter password");
+                            mPasswordView.requestFocus();
+                            break;
+
+                        case ParseException.EMAIL_NOT_FOUND:
+                            Log.d("Testing", "Sorry, EMAIL_NOT_FOUND.");
+                            showProgress(false);
+                            mEmailView.setError("User not exist");
+                            mEmailView.requestFocus();
+                            break;
+                        case ParseException.CONNECTION_FAILED:
+                            Log.d("Testing", "Internet connection was not found. Please see your connection settings.");
+                            showProgress(false);
+                            mEmailView.setError("CONNECTION_FAILED");
+                            mEmailView.requestFocus();
+                            break;
+                        case ParseException.INVALID_EMAIL_ADDRESS:
+                            Log.d("Testing", "Internet connection was not found. Please see your connection settings.");
+                            showProgress(false);
+                            mEmailView.setError(getText(R.string.error_invalid_email));
+                            mEmailView.requestFocus();
+                            break;
+                        case ParseException.OBJECT_NOT_FOUND:
+                            Log.d("Testing", "OBJECT_NOT_FOUND");
+                            showProgress(false);
+                            mEmailView.setError(getText(R.string.error_incorrect_password));
+                            mEmailView.requestFocus();
+                            break;
+                        default:
+                            Log.d("Testing", "" + e.getCode());
+                            showProgress(false);
+                            mPasswordView.setError("User or Password not correct");
+                            mPasswordView.requestFocus();
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
+
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
@@ -287,63 +486,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 
