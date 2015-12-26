@@ -1,23 +1,24 @@
-package com.medroid.acnescanner;
+package com.medroid.acnescanner.vizualize;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.content.res.Resources;
-import android.os.Build;
-import android.view.animation.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.medroid.acnescanner.PieGraph.OnSliceClickedListener;
+import com.medroid.acnescanner.vizualize.PieGraph.OnSliceClickedListener;
+import com.medroid.acnescanner.R;
 
 public class PieFragment extends Fragment {
 
@@ -92,7 +93,7 @@ public class PieFragment extends Fragment {
             }
         });
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
             animateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,7 +111,7 @@ public class PieFragment extends Fragment {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     public Animator.AnimatorListener getAnimationListener(){
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
             return new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {

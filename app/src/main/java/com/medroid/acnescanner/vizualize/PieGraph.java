@@ -1,4 +1,4 @@
-package com.medroid.acnescanner;
+package com.medroid.acnescanner.vizualize;
 
 /**
  * Created by tal on 17/12/2015.
@@ -46,6 +46,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+
+import com.medroid.acnescanner.R;
 
 import java.util.ArrayList;
 
@@ -310,7 +312,7 @@ public class PieGraph extends View implements  HoloGraphAnimate {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public void animateToGoalValues() {
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1){
             Log.e("compatibility error", "not supported on api level 12. Returning without animating.");
             return;
         }

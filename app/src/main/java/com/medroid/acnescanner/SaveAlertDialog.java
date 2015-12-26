@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.Date;
@@ -29,6 +29,7 @@ public class SaveAlertDialog extends DialogFragment {
     private Activity act= null;
 
     public SaveAlertDialog() {super();}
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -54,6 +55,10 @@ public class SaveAlertDialog extends DialogFragment {
                 parse.put("precent", precentage);
                 parse.put("reason", m_Text);
 
+                ParseUser user = ParseUser.getCurrentUser();
+                parse.put("user", user.getEmail());
+
+                parse.saveEventually(); //TODO save in cloud this does not work
 
                 parse.pinInBackground(new SaveCallback() {
                     @Override
@@ -63,8 +68,6 @@ public class SaveAlertDialog extends DialogFragment {
                                 @Override
                                 public void run() {
                                     StartAct();
-
-
                                 }
                             });
                             Log.i("save precentage", "");
@@ -91,6 +94,8 @@ public class SaveAlertDialog extends DialogFragment {
     {
         Toast toast = Toast.makeText(act, "saved " + m_Text, Toast.LENGTH_LONG);
         toast.show();
+        Intent intent = new Intent(act, ProgressChartActivity.class);
+        act.startActivity(intent);
 
     }
 

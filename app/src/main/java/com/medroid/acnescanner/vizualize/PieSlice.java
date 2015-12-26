@@ -1,4 +1,4 @@
-package com.medroid.acnescanner;
+package com.medroid.acnescanner.vizualize;
 
 /**
  * Created by tal on 17/12/2015.

@@ -99,7 +99,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                     if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                        attemptLogin();
+                        attemptLogin(0);
                         return true;
                     }
                     return false;
@@ -112,14 +112,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mEmailSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    attemptLogin();
+                    attemptLogin(0);
                 }
             });
 
             mEmailSignUpButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    attemptLogin();     //TODO: need to change to signup to DB and not sign-in
+                    attemptLogin(1);
                 }
             });
 
@@ -144,18 +144,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                         Log.e("LoginActivity", "error");
                                         // handle error
                                     } else {
-
+                                        //TODO need to make sure email is not empthy, user can signin to facebook with phone number
                                         String email = me.optString("email");
                                         Log.e("LoginActivity", email);
 
-                                        ParseUser user = new ParseUser();
                                         try {
-                                            user.setUsername(email);
-                                            user.setPassword(me.getString("id"));
-                                            user.setEmail(email);
-
-//                                            user.becomeInBackground("session-token-here");
-                                            SignupToDB(user);
+                                            SignupToDB(email, me.getString("id"));
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -201,7 +195,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void attemptLogin() {
+    public void attemptLogin(int type) {
+        /**
+         *@param type -  0 or 1. 0 to login 1 to register
+         */
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -239,13 +236,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            logInToDB(email,password);
+            if (type == 0)
+                logInToDB(email,password);
+            else
+                SignupToDB(email, password);
         }
     }
 
 
-    private void SignupToDB(ParseUser user)
+    private void SignupToDB(String email, String password)
     {
+        ParseUser user = new ParseUser();
+        user.setUsername(email);
+        user.setPassword(password);
+        user.setEmail(email);
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(com.parse.ParseException e) {
@@ -382,10 +386,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
     }
-
-
-
-
 
 
     private boolean isEmailValid(String email) {

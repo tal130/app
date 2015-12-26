@@ -10,11 +10,8 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -49,7 +45,9 @@ public class ComapreActivity extends BaseActivity{
         today = (TouchImageView) findViewById(R.id.up);
         yesterday = (TouchImageView) findViewById(R.id.down);
         spinner = (Spinner) findViewById(R.id.spinner);
-        spinnerArray = new ArrayList<String>();
+        spinnerArray = new ArrayList<>();
+
+        spinner.setVisibility(View.INVISIBLE);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
         query.fromLocalDatastore();
@@ -62,7 +60,7 @@ public class ComapreActivity extends BaseActivity{
                     Log.i("today path : ", objects.get(0).getString("path"));
                     setImage(today, objects.get(0).getString("path"));
                     if (objects.size() == 1) {
-                        setImage(yesterday, objects.get(0).getString("path"));
+                        setImage(yesterday, objects.get(0).getString("path"));  //TODO set default image instead of the same
                     } else {
                         setImage(yesterday, objects.get(1).getString("path"));
                     }

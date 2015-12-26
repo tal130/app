@@ -3,10 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.medroid.acnescanner.PieGraph
+    <com.medroid.acnescanner.vizualize.PieGraph
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:id="@+id/graph"/>
+        android:id="@+id/graph"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Month progress"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="40dp"
+        android:layout_marginTop="50dp" />
 
     <!--<FrameLayout-->
         <!--android:id="@+id/FragmentContainer"-->

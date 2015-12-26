@@ -9,30 +9,70 @@ import android.app.FragmentTransaction;
 import android.app.Activity;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.medroid.acnescanner.vizualize.PieGraph;
+import com.medroid.acnescanner.vizualize.PieSlice;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.List;
+
 
 public class ProgressChartActivity extends Activity{
+    private PieSlice slice;
+    private PieGraph pg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_chart);
 
-        PieGraph pg = (PieGraph)findViewById(R.id.graph);
-        PieSlice slice = new PieSlice();
-        slice.setColor(Color.parseColor("#99CC00"));
-        slice.setValue(2);
-        pg.addSlice(slice);
-        slice = new PieSlice();
-        slice.setColor(Color.parseColor("#FFBB33"));
-        slice.setValue(3);
-        pg.addSlice(slice);
-        slice = new PieSlice();
-        slice.setColor(Color.parseColor("#AA66CC"));
-        slice.setValue(8);
-        pg.addSlice(slice);
+        pg = (PieGraph)findViewById(R.id.graph);
 
 
-        //for the hole in the middle
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Status");
+        query.fromLocalDatastore();
+        query.orderByDescending("date");
+        query.findInBackground(new FindCallback<ParseObject>() {
+                                   @Override
+                                   public void done(List<ParseObject> objects, ParseException e) {
+                                       if(e==null)
+                                       {
+                                           for (ParseObject obj : objects) {
+                                               slice = new PieSlice();
+                                               if (obj.getDouble("precent") > 50)
+                                                   slice.setColor(Color.parseColor("#99CC00"));
+                                               else
+                                                   slice.setColor(Color.parseColor("#FF0000"));
+                                               slice.setValue(1);
+                                               pg.addSlice(slice);
+                                           }
+                                       }
+                                       else
+                                       {
+                                           e.printStackTrace();
+                                       }
+                                   }
+                               });
+
+
+//
+//        slice.setColor(Color.parseColor("#99CC00"));
+//        slice.setValue(2);
+//        pg.addSlice(slice);
+//        slice = new PieSlice();
+//        slice.setColor(Color.parseColor("#FFBB33"));
+//        slice.setValue(3);
+//        pg.addSlice(slice);
+//        slice = new PieSlice();
+//        slice.setColor(Color.parseColor("#FF0000"));
+//        slice.setValue(8);
+//        pg.addSlice(slice);
+
+
+        //for the hole size in the middle
         pg.setInnerCircleRatio(150);
 
 
