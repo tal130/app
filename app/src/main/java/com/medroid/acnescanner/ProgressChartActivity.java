@@ -17,6 +17,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,15 +41,26 @@ public class ProgressChartActivity extends Activity{
                                    public void done(List<ParseObject> objects, ParseException e) {
                                        if(e==null)
                                        {
+                                           HashMap<Integer,String> monthmap = new HashMap<Integer, String>();
+                                           for (int i=1;i<32;i++)
+                                               monthmap.put(i,"#aaaa11");
                                            for (ParseObject obj : objects) {
-                                               slice = new PieSlice();
                                                if (obj.getDouble("precent") > 50)
-                                                   slice.setColor(Color.parseColor("#99CC00"));
+                                                   monthmap.put(obj.getDate("date").getDay(),"#99CC00");
                                                else
-                                                   slice.setColor(Color.parseColor("#FF0000"));
+                                                   monthmap.put(obj.getDate("date").getDay(), "#FF0000");
+
+
+                                           }
+                                           for (int i=1;i<32;i++)
+                                           {
+                                               slice = new PieSlice();
+                                               slice.setColor(Color.parseColor(monthmap.get(i)));
                                                slice.setValue(1);
                                                pg.addSlice(slice);
                                            }
+
+
                                        }
                                        else
                                        {

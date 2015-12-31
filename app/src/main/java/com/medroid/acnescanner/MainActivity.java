@@ -163,8 +163,16 @@ public class MainActivity extends BaseActivity {
 
             bitmapOptions.inJustDecodeBounds = true;
             //TODO some times crash here "java.lang.RuntimeException: Failure delivering result ResultInfo{who=null, request=1, result=-1, data=null} to activity {com.medroid.acnescanner/com.medroid.acnescanner.MainActivity}: java.lang.NullPointerException"
-            int targetW = faceImage.getWidth();
-            int targetH = faceImage.getHeight();
+            int targetW = 0;
+            int targetH = 0;
+            try {
+                targetW = faceImage.getWidth();
+                targetH = faceImage.getHeight();
+            }catch (Exception e)
+            {
+                Log.e("RuntimeException","");
+                return;
+            }
             BitmapFactory.decodeFile(mCurrentPhotoPath, bitmapOptions);
             int photoW = bitmapOptions.outWidth;
             int photoH = bitmapOptions.outHeight;

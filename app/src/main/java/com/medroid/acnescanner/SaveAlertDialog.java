@@ -58,8 +58,7 @@ public class SaveAlertDialog extends DialogFragment {
                 ParseUser user = ParseUser.getCurrentUser();
                 parse.put("user", user.getEmail());
 
-                parse.saveEventually(); //TODO save in cloud this does not work
-
+                parse.saveEventually();
                 parse.pinInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
