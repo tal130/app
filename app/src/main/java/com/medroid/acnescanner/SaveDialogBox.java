@@ -1,5 +1,6 @@
 package com.medroid.acnescanner;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,14 +19,13 @@ import com.parse.SaveCallback;
  * Created by tal on 16/12/2015.
  */
 public class SaveDialogBox extends DialogFragment{
+    double precentage= 0.0;
 
-        double precentage= 0.0;
     private Activity act= null;
         public SaveDialogBox(){super();}
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // TODO Auto-generated method stub
             //return super.onCreateDialog(savedInstanceState);
             precentage = getArguments().getDouble("precentage");
             act = getActivity();

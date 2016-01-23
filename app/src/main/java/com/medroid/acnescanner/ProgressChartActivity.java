@@ -9,6 +9,8 @@ import android.app.FragmentTransaction;
 import android.app.Activity;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.medroid.acnescanner.vizualize.PieGraph;
 import com.medroid.acnescanner.vizualize.PieSlice;
 import com.parse.FindCallback;
@@ -24,11 +26,16 @@ import java.util.List;
 public class ProgressChartActivity extends Activity{
     private PieSlice slice;
     private PieGraph pg;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_chart);
+
+        // Obtain the shared Tracker instance.
+        Myapplication application = (Myapplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         pg = (PieGraph)findViewById(R.id.graph);
 
@@ -110,4 +117,12 @@ public class ProgressChartActivity extends Activity{
 //        fragmentTransaction.add(R.id.FragmentContainer, hello, "HELLO");
 //        fragmentTransaction.commit();
 //    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName("ChartActivity~");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 }

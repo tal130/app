@@ -11,14 +11,13 @@ import android.provider.MediaStore;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.analytics.HitBuilders;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -32,23 +31,29 @@ import java.util.Date;
 import java.io.File;
 import java.io.FilenameFilter;
 
-
+import com.google.android.gms.analytics.Tracker;
 
 public class MainActivity extends BaseActivity {
     private ImageView faceImage;
     private ImageView faceImage2;
 
-    public static final  SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    public static final  SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     private String mCurrentPhotoPath;
     private String workDir;
     private File imageFileName;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Obtain the shared Tracker instance.
+        Myapplication application = (Myapplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
         //setContentView(R.layout.activity_main);
         ParseObject image = new ParseObject("images");
 
@@ -72,7 +77,6 @@ public class MainActivity extends BaseActivity {
                     try {
                         Log.i("today date: " , object.getString("date"));
                         if (DATE_FORMAT.parse(object.getString("date")).after(DATE_FORMAT.parse(s))) {
-                            //TODO set bundle with result
                             setComparePage();
                         } else {
                             //no picture taken today
@@ -285,6 +289,9 @@ public class MainActivity extends BaseActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+
+        mTracker.setScreenName("MainActivity~");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

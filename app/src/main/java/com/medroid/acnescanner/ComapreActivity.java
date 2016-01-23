@@ -20,6 +20,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -36,11 +38,16 @@ public class ComapreActivity extends BaseActivity{
     private TouchImageView yesterday;
     private Spinner spinner;
     private ArrayList<String> spinnerArray;
+    private Tracker mTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comapre);
 
+        // Obtain the shared Tracker instance.
+        Myapplication application = (Myapplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         today = (TouchImageView) findViewById(R.id.up);
         yesterday = (TouchImageView) findViewById(R.id.down);
@@ -246,4 +253,11 @@ public class ComapreActivity extends BaseActivity{
         System.exit(0);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mTracker.setScreenName("CompareActivity~");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 }
