@@ -8,4 +8,9 @@
         android:title="test"
         app:showAsAction="always" />
 
+    <item android:id="@+id/action_feedback"
+        android:text="send feedback- שלח משוב"
+        android:title="send feedback"
+        app:showAsAction="always" />
+
 </menu>

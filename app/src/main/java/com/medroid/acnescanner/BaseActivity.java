@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.medroid.acnescanner.vizualize.feedback;
+
 /**
  * Created by tal on 30/06/2015.
  */
@@ -22,14 +25,17 @@ public class BaseActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         switch (id) {
             case R.id.action_massage:
-                openMassages();
+                openChartActivity();
+                return true;
+            case R.id.action_feedback:
+                openFeedbackActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void openMassages() {
+    public void openChartActivity() {
         //show massages from people who want to join
 //        Bundle bundle=new Bundle();
 //        bundle.putString("type","message");
@@ -37,6 +43,12 @@ public class BaseActivity extends AppCompatActivity {
 //        intent.putExtras(bundle);
         startActivity(intent);
     }
+
+    public void openFeedbackActivity() {
+        Intent intent = new Intent(this, feedback.class);
+        startActivity(intent);
+    }
+
 
 
     @Override

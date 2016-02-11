@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -56,6 +57,8 @@ public class ComapreActivity extends BaseActivity{
 
         spinner.setVisibility(View.INVISIBLE);
 
+        Toast.makeText(this, "Set progress bar for better or worse", Toast.LENGTH_LONG).show();
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
         query.fromLocalDatastore();
         query.orderByDescending("date");
@@ -67,7 +70,7 @@ public class ComapreActivity extends BaseActivity{
                     Log.i("today path : ", objects.get(0).getString("path"));
                     setImage(today, objects.get(0).getString("path"));
                     if (objects.size() == 1) {
-                        setImage(yesterday, objects.get(0).getString("path"));  //TODO set default image instead of the same
+                        yesterday.setImageResource(R.drawable.avatar_new);
                     } else {
                         setImage(yesterday, objects.get(1).getString("path"));
                     }
